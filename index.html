@@ -12,15 +12,15 @@
 <script>
   function escapeHtml(text)
   {
-    if("string" != (typeof text)){return text;}
+    if("string"!=(typeof text)){return text;}
     return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
   }
-  function prepare(s){return escapeHtml(s);}
+  function inc(map,key){if(!(key in map)){map[key]=0;}map[key]++;}
   function PrintMyTable(table)
   {
     function skip_field(field){
@@ -31,12 +31,13 @@
     var def_table=[{'id':1,'nick':'Owen'},{'id':2,'nick':'Kyle'}];
     if(!table.length){return 'table is empty';}
     if(!Object.keys(table[0]).length){return 'table is empty';}
-    var arr=Object.keys(table[0]);
+    var km={};for(var i=0;i<table.length;i++){var ex=table[i];for(var k in ex){inc(km,k);}}
+    var arr=Object.keys(km);
     var out="";var head="";
     for(var i in arr)
     {
       if(skip_field(arr[i]))continue;
-      out+='<td>'+prepare(arr[i])+'</td>';
+      out+='<td>'+escapeHtml(arr[i])+'</td>';
     }
     var head='<thead><tr>'+out+'</tr></thead>';
     out="";
@@ -45,9 +46,11 @@
       var tmp="";
       //var tmp_arr=table[table.length-i-1];
       var tmp_arr=table[i];
-      for(var key in tmp_arr){
-        if(skip_field(key))continue;
-        tmp+='<td>'+prepare(tmp_arr[key])+'</td>';
+      for(var j=0;j<arr.length;j++){
+        //if(skip_field(key))continue;
+        var k=arr[j];var v="<b>0</b>";var bg="";
+        if(k in tmp_arr){v=escapeHtml(tmp_arr[k]);}else{/*bg='class="bgw"';*/}
+        tmp+='<td>'+v+'</td>';
       }
       out+='<tr>'+tmp+'</tr>';
     }
