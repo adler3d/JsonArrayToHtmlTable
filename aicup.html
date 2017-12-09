@@ -62,7 +62,6 @@
     var data=document.getElementById("data").value;
     
     //xhr("http://russianaicup.ru/2017_R2_games.log",make_top_great_again,()=>{console.log("no way")});
-    var number_of_players=4;//360;
     var qapsort=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;return arr.sort((a,b)=>cb(b)-cb(a));}
     var qapmin=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.min(out,v);}return out;}
     var qapmax=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.max(out,v);}return out;}
@@ -87,14 +86,14 @@
       arr.map(e=>getarr(waveid2games,e.wave_id).push(e));
       var max_games=qapmax(waveid2games,e=>e.length);
       var min_games=qapmin(user2games,e=>e.length);
-      var done=[];
+      var done=[];var number_of_players=Object.keys(user2games).length;
       for(var i in waveid2games){var e=waveid2games[i];if(e.length==number_of_players/2)done.push(i);}
       var users={};
       var f=(u,g,id)=>{
         getarr(users,u).push(g.delta[id]);
       };
       done.map(wid=>waveid2games[wid]).map(games=>games.map(
-      e=>{f(e.players[0],e,0);f(e.players[1],e,1);}
+        e=>{f(e.players[0],e,0);f(e.players[1],e,1);}
       ));
       var table=[];
       for(var u in users){
