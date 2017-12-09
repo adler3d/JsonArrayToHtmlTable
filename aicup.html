@@ -76,7 +76,11 @@
       var f=s=>{var A=s.split(" ");return {id:A[0],v:A[1]};};
       var t=[f(arr[2]),f(arr[3])];
       if(t[0].v==t[1].v)return [1,1];
-      return t[0].v<t[1].v&&t[0].id=="1"?[0,2]:[2,0];
+      var t1_win=t[0].v<t[1].v;
+      if(t[0].id=="1")return t1_win?[0,2]:[2,0];
+      if(t[0].id=="2")return t1_win?[2,0]:[0,2];
+      console.log("no way");
+      return [0,0];
     }
     var make_top_great_again=(data)=>{
       var arr=data.split("\n").map(e=>JSON.parse(e));
@@ -118,9 +122,13 @@
 </head>
 <body>
     <p><b>data:</b></p>
-    <p><textarea spellcheck="false" style="width:95%" rows="10" name="data" id="data">{"wave_id":10,"gameid":9000,"players":["user_a","user_b"],"result.txt":"OK 1283\nSEED 22904832135050\n2 0 CRASHED\n1 0 CRASHED\n"}
-{"wave_id":11,"gameid":9001,"players":["user_c","user_d"],"result.txt":"OK 1283\nSEED 22904832135050\n2 388 CRASHED\n1 396 CRASHED\n"}
-{"wave_id":11,"gameid":9002,"players":["user_b","user_a"],"result.txt":"OK 1283\nSEED 22904832135050\n2 388 CRASHED\n1 396 CRASHED\n"}</textarea></p>
+    <p><textarea spellcheck="false" style="width:95%" rows="10" name="data" id="data">{"wave_id":10,"gameid":9000,"players":["user_a","user_b"],"result.txt":"OK 1283\nSEED ...\n2 0 ...\n1 0 ...\n"}
+{"wave_id":11,"gameid":9001,"players":["user_c","user_d"],"result.txt":"OK 1283\nSEED 22904832135050\n2 100 OK\n1 200 WIN\n"}
+{"wave_id":11,"gameid":9002,"players":["user_b","user_a"],"result.txt":"OK 1283\nSEED 22904832135050\n2 30 OK\n1 60 WIN\n"}
+{"wave_id":14,"gameid":9002,"players":["user_b","user_b"],"result.txt":"OK 1283\nSEED ...\n2 388 ...\n1 396 ...\n"}
+{"wave_id":15,"gameid":9002,"players":["user_b","user_b"],"result.txt":"OK 1283\nSEED ...\n2 388 ...\n1 396 ...\n"}
+{"wave_id":12,"gameid":9001,"players":["user_a","user_d"],"result.txt":"OK 1283\nSEED 22904832135050\n2 40 OK\n2 20 OK\n"}
+{"wave_id":12,"gameid":9002,"players":["user_b","user_b"],"result.txt":"OK 1283\nSEED 22904832135050\n1 80 OK\n2 90 WIN\n"}</textarea></p>
     <p><button onclick="main();">Go</button></p>
     <pre name="out" id="out"></pre>
   <h2>version 1.0</h2><img style="display:none" src="http://adler.hol.es/github/dir.png" />
