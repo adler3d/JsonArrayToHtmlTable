@@ -76,7 +76,7 @@
       var f=s=>{var A=s.split(" ");return {id:A[0],v:A[1]};};
       var t=[f(arr[2]),f(arr[3])];
       if(t[0].v==t[1].v)return [1,1];
-      return t[0].v<t[1].v?[0,2]:[2,0];
+      return t[0].v<t[1].v&&t[0].id=="1"?[0,2]:[2,0];
     }
     var make_top_great_again=(data)=>{
       var arr=data.split("\n").map(e=>JSON.parse(e));
