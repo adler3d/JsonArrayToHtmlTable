@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>table_gen JS</title>
+<style type="text/css">
+  table{border-collapse:collapse;font-size:10pt;}
+  thead{background:#ccc;text-align:center;font-weight:bold;}
+  td,thead{border:1px solid #800;padding:4px;}
+  textarea[readonly="readonly"]{background-color:#e8e8e8;}
+</style>
+<script>
+  function escapeHtml(text)
+  {
+    if("string"!=(typeof text)){return text;}
+    return text
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+  }
+  function inc(map,key){if(!(key in map)){map[key]=0;}map[key]++;}
+  function PrintMyTable(table)
+  {
+    function skip_field(field){
+      var ignore=[];//["user_agent","request_uri","referrer"];
+      for(var key in ignore)if(ignore[key]==field){return true;}
+      return false;
+    };
+    var def_table=[{'id':1,'nick':'Owen'},{'id':2,'nick':'Kyle'}];
+    if(!table.length){return 'table is empty';}
+    if(!Object.keys(table[0]).length){return 'table is empty';}
+    var km={};for(var i=0;i<table.length;i++){var ex=table[i];for(var k in ex){inc(km,k);}}
+    var arr=Object.keys(km);
+    var out="";var head="";
+    for(var i in arr)
+    {
+      if(skip_field(arr[i]))continue;
+      out+='<td>'+escapeHtml(arr[i])+'</td>';
+    }
+    var head='<thead><tr>'+out+'</tr></thead>';
+    out="";
+    for(var i=0;i<table.length;i++)
+    {
+      var tmp="";
+      //var tmp_arr=table[table.length-i-1];
+      var tmp_arr=table[i];
+      for(var j=0;j<arr.length;j++){
+        //if(skip_field(key))continue;
+        var k=arr[j];var v="<b>0</b>";var bg="";
+        if(k in tmp_arr){v=escapeHtml(tmp_arr[k]);}else{/*bg='class="bgw"';*/}
+        tmp+='<td>'+v+'</td>';
+      }
+      out+='<tr>'+tmp+'</tr>';
+    }
+    out='<table>'+head+'<tbody>'+out+'</tbody></table>';
+    return out;
+  }
+  function main()
+  {
+    var data=document.getElementById("data").value;
+    
+    //xhr("http://russianaicup.ru/2017_R2_games.log",make_top_great_again,()=>{console.log("no way")});
+
+    var number_of_players=4;//360;
+
+    var qapsort=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;return arr.sort((a,b)=>cb(b)-cb(a));}
+    var qapmin=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.min(out,v);}return out;}
+    var qapmax=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.max(out,v);}return out;}
+    var qapsum=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;return arr.reduce((pv,ex)=>pv+cb(ex),0);}
+    var getarr=(m,k)=>{if(!(k in m))m[k]=[];return m[k];};
+
+    var result_parse=(data)=>{
+      var arr=data.split("\n");//OK 1283\nSEED 22904832135050\n2 388 CRASHED\n1 396 CRASHED\n
+      var f=s=>{var A=s.split(" ");return {id:A[0],v:A[1]};};
+      var t=[f(arr[2]),f(arr[3])];
+      if(t[0].v==t[1].v)return [1,1];
+      return t[0].v<t[1].v?[0,2]:[2,0];
+    }
+    var make_top_great_again=(data)=>{
+      var arr=data.split("\n").map(e=>JSON.parse(e));
+      var user2games={};var waveid2games={};
+      arr.map(e=>e.delta=result_parse(e["result.txt"]));
+      arr.map(e=>{var p=e.players;getarr(user2games,p[0]).push(e);getarr(user2games,p[1]).push(e);});
+      arr.map(e=>getarr(waveid2games,e.wave_id).push(e));
+      var max_games=qapmax(waveid2games,e=>e.length);
+      var min_games=qapmin(user2games,e=>e.length);
+      var done=[];
+      for(var i in waveid2games){var e=waveid2games[i];if(e.length==number_of_players/2)done.push(i);}
+      var users={};
+      var f=(u,g,id)=>{
+        getarr(users,u).push(g.delta[id]);
+      }
+      done.map(wid=>waveid2games[wid]).map(games=>games.map(
+      e=>{f(e.players[0],e,0);f(e.players[1],e,1);}
+      ));
+      var table=[];
+      for(var u in users){
+        var user_games=users[u];
+        var out={
+        user:u,
+        score:qapsum(user_games),
+        wins:(qapsum(user_games,d=>d?1:0)*100/done.length)+" %"
+      };
+        table.push(out);
+      }
+      var out=JSON.stringify(qapsort(table,e=>e.score));
+      document.getElementById("out").innerHTML="<pre>"+out;
+      //document.body.innerHTML="<pre>"+out;
+      //console.log(out);
+    };
+    make_top_great_again(data);
+    //document.getElementById("out").innerHTML=PrintMyTable(JSON.parse(data));
+  }
+</script>
+</head>
+<body>
+    <p><b>data:</b></p>
+    <p><textarea style="width:95%" rows="10" name="data" id="data">{"wave_id":10,"gameid":9000,"players":["user_a","user_b"],"result.txt":"OK 1283\nSEED 22904832135050\n2 0 CRASHED\n1 0 CRASHED\n"}
+{"wave_id":11,"gameid":9001,"players":["user_c","user_d"],"result.txt":"OK 1283\nSEED 22904832135050\n2 388 CRASHED\n1 396 CRASHED\n"}
+{"wave_id":11,"gameid":9002,"players":["user_b","user_a"],"result.txt":"OK 1283\nSEED 22904832135050\n2 388 CRASHED\n1 396 CRASHED\n"}</textarea></p>
+    <p><button onclick="main();">Go</button></p>
+    <pre name="out" id="out"></pre>
+  <h2>version 1.0</h2><img style="display:none" src="http://adler.hol.es/github/dir.png" />
+</body></html>
