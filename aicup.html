@@ -105,8 +105,9 @@
       };
         table.push(out);
       }
-      var out=JSON.stringify(qapsort(table,e=>e.score));
-      document.getElementById("out").innerHTML="<pre>"+out;
+      var sorted_table=qapsort(table,e=>e.score);
+      var out=JSON.stringify(sorted_table);
+      document.getElementById("out").innerHTML=PrintMyTable(sorted_table);
       //document.body.innerHTML="<pre>"+out;
       //console.log(out);
     };
