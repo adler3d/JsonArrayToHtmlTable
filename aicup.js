@@ -5,7 +5,7 @@ var http = require("http"),
     fs = require("fs"),
     os = require("os");
 
-var number_of_players=4;//360;  
+var number_of_players=360;  
 var qapsort=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;return arr.sort((a,b)=>cb(b)-cb(a));}  
 var qapmin=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.min(out,v);}return out;}  
 var qapmax=(arr,cb)=>{if(typeof cb=='undefined')cb=e=>e;var out;var i=0;for(var k in arr){var v=cb(arr[k]);if(!i){out=v;}i++;out=Math.max(out,v);}return out;}  
@@ -37,7 +37,7 @@ var make_top_great_again=(data)=>{
     getarr(users,u).push(g.delta[id]);  
   };  
   done.map(wid=>waveid2games[wid]).map(games=>games.map(  
-  e=>{f(e.players[0],e,0);f(e.players[1],e,1);}  
+    e=>{f(e.players[0],e,0);f(e.players[1],e,1);}  
   ));  
   var table=[];  
   for(var u in users){  
