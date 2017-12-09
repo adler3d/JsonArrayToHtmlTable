@@ -100,12 +100,14 @@
       for(var u in users){
         var user_games=users[u];
         table.push({
+		  "#":-1,
           user:u,
           score:qapsum(user_games),
           wins:(qapsum(user_games,d=>d?1:0)*100/done.length)+" %"
         });
       }
       var sorted_table=qapsort(table,e=>e.score);
+	  sorted_table.map((e,i)=>e['#']=i+1);
       var out=JSON.stringify(sorted_table);
       document.getElementById("out").innerHTML=PrintMyTable(sorted_table);
       //document.body.innerHTML="<pre>"+out;
