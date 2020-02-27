@@ -65,9 +65,11 @@
 </script>
 </head>
 <body>
+  <center>
     <p><b>data:</b></p>
-    <p><textarea spellcheck="false" style="width:95%" rows="10" name="data" id="data"></textarea></p>
+    <p><textarea spellcheck="false" style="width:95%" rows="10" name="data" id="data" onkeypress="if(event.keyCode==10||(event.ctrlKey&&event.keyCode==13))main();"></textarea></p>
     <p><button onclick="main();">Go</button></p>
     <pre name="out" id="out"></pre>
-  <h2>version 1.0</h2><img style="display:none" src="http://adler.hol.es/github/dir.png" />
+    <h2>version 1.1</h2>
+  </center>
 </body></html>
